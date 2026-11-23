@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerador de Escala 5x2</title>
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#1d2b3a;--mut:#667385;--line:#d9d5cb;--ac:#0f6b5c;--acl:#dff0ec;--warn:#b3261e;--warnl:#fbe6e4;--off:#ece9e1}
+@media (prefers-color-scheme:dark){:root{--bg:#151b22;--card:#1e2630;--ink:#e8edf2;--mut:#93a1b2;--line:#34404e;--ac:#4cc2ad;--acl:#1c3a35;--warn:#ff8a80;--warnl:#3d2321;--off:#27313d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+header{padding:20px 24px 8px}
+h1{margin:0;font-size:24px;letter-spacing:-.3px}
+header p{margin:2px 0 0;color:var(--mut)}
+.locgrid{display:grid;grid-template-columns:1fr 1.5fr;gap:8px}
+@media(max-width:520px){.locgrid{grid-template-columns:1fr}}
+#cidade:disabled{opacity:.65}#locMsg{min-height:18px}#cfg section{box-shadow:0 1px 2px #00000008}#nome,#uf,#cidade{padding:10px}#cfg .section-intro{margin:0 0 10px;color:var(--mut);font-size:13px}
+main{display:grid;grid-template-columns:minmax(300px,400px) 1fr;gap:16px;padding:12px 24px 40px;align-items:start}
+@media(max-width:900px){main{grid-template-columns:1fr;padding:12px}}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:16px}
+label{display:block;font-size:13px;color:var(--mut);margin:8px 0 3px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.row{display:flex;gap:8px;align-items:end}.row>*{flex:1}
+.row .fit{flex:none}
+button{cursor:pointer;border:1px solid var(--line);background:var(--card);padding:7px 12px;border-radius:6px}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){button.p{color:#0b1a17}}
+button.x{padding:2px 8px;color:var(--warn)}
+.days{display:flex;flex-wrap:wrap;gap:6px}
+.days label{display:flex;align-items:center;gap:5px;margin:0;padding:5px 9px;border:1px solid var(--line);border-radius:6px;color:var(--ink);cursor:pointer}
+.days input{width:auto}
+.seg{display:flex;gap:6px}.seg label{flex:1;display:flex;justify-content:center;gap:6px;margin:0;padding:7px;border:1px solid var(--line);border-radius:6px;color:var(--ink);cursor:pointer}
+.seg input{width:auto}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.item small{color:var(--mut);display:block}
+textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font:inherit;color:inherit;resize:vertical}
+.imp{padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.chk{display:flex;gap:8px;align-items:center;margin:4px 0;color:var(--ink);font-size:14px}.chk input{width:auto}.chk small{color:var(--mut)}
+.item.ed{display:block}.eh{display:flex;gap:8px;align-items:center}.eh small{flex:1;display:inline;color:var(--mut)}
+.fer-month{margin:12px 0 5px}.fer-month h3{font-size:14px;margin:0;padding:7px 9px;background:var(--acl);color:var(--ac);border-radius:6px;text-transform:capitalize}.fer-month:first-child{margin-top:8px}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.eg label{margin:4px 0 0;font-size:12px}
+.hint{font-size:12.5px;color:var(--mut);margin:6px 0 0}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.bar input{width:auto}
+.wk{margin-bottom:16px}.wk th small{font-weight:400;color:var(--mut)}td.o,th.oth{background:repeating-linear-gradient(45deg,transparent 0 5px,var(--off) 5px 6px);color:var(--mut)}th.oth{background-color:var(--off)}
+td.fe{background:var(--acl);color:var(--ac);font-weight:700}td.ft{background:var(--acl)}.hn{color:var(--ac);font-weight:700}
+#alerts div{background:var(--warnl);color:var(--warn);border-radius:6px;padding:7px 10px;margin-bottom:6px;font-size:13.5px}
+.sheet{overflow-x:auto}
+.sheet h3{margin:0 0 2px;font-size:20px}
+.sheet .sub{color:var(--mut);margin:0 0 10px}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{border:1px solid var(--line);padding:7px 6px;text-align:center;font-size:13.5px}
+th{background:var(--acl);font-weight:600}
+td.n{text-align:left;font-weight:600}td.n small{display:block;font-weight:400;color:var(--mut)}
+td.f{background:var(--off);color:var(--mut);font-weight:600}
+tr.cv td{font-size:12.5px;background:transparent}
+tr.cv td.bad{background:var(--warnl);color:var(--warn);font-weight:700}
+.empty{color:var(--mut);padding:30px;text-align:center}
+@media print{
+ @page{size:landscape;margin:12mm}
+ body{background:#fff;color:#000}
+ header,#cfg,.bar,#alerts,.noprint{display:none!important}
+ main{display:block;padding:0}
+ section{border:0;padding:0}
+ th{background:#e5e5e5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ td.fe,td.ft{background:#dfeee9!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}td.f{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ td,th{border-color:#444;font-size:9.5pt;padding:4px 3px}.wk{break-inside:avoid;margin-bottom:10px}.sheet h3{font-size:16pt}
+}
+</style>
+</head>
+<body>
+<header><h1>Gerador de Escala 5x2</h1><p>Configure a empresa, cadastre a equipe e gere a escala do mês para o quadro de avisos.</p></header>
+<main>
+<div id="cfg">
+ <section>
+  <h2>1. Identificação da empresa</h2>
+  <p class="section-intro">Informe os dados do estabelecimento. A cidade será usada para localizar os feriados aplicáveis.</p>
+  <div class="row"><div><label for="perf">Empresas salvas</label><select id="perf"></select></div><button class="fit" id="bDel">Excluir</button></div>
+  <label for="nome">Nome da empresa</label><input id="nome" placeholder="Ex.: Loja Centro">
+  <div class="locgrid">
+   <div><label for="uf">Estado</label><select id="uf"><option value="">Selecione</option><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option><option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option><option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option></select></div>
+   <div><label for="cidade">Município</label><select id="cidade" disabled><option value="">Selecione primeiro o estado</option></select></div>
+  </div>
+  <p class="hint" id="locMsg">A lista de municípios é carregada automaticamente pela base do IBGE.</p>
+  <div class="row" style="margin-top:10px"><button class="p" id="bSave">Salvar empresa</button><button id="bNew">Nova empresa</button></div>
+  <p class="hint" id="saveMsg">Os dados ficam salvos neste navegador.</p>
+ </section>
+ <section>
+  <h2>2. Jornada de trabalho</h2>
+  <div class="seg"><label><input type="radio" name="h" value="40" checked> 40 horas</label><label><input type="radio" name="h" value="42"> 42 horas</label></div>
+  <p class="hint">40h = 8h/dia. 42h = 8h24/dia. Horas líquidas, sem contar o intervalo.</p>
+ </section>
+ <section>
+  <h2>3. Dias de funcionamento</h2>
+  <div class="days" id="days"></div>
+  <p class="hint">Dias não marcados viram FOLGA para todos automaticamente. Com 6 ou 7 dias abertos, o sistema distribui e reveza as folgas entre as semanas do mês.</p>
+ </section>
+ <section>
+  <h2>4. Feriados</h2>
+  <div class="row"><div><label for="fd">Data do feriado manual</label><input id="fd" type="date"></div><div><label for="fn">Nome</label><input id="fn" placeholder="Ex.: Feriado municipal"></div></div>
+  <div class="row" style="margin-top:8px"><button class="p" id="bBuscaFeriados">Buscar feriados deste mês no banco</button></div>
+  <p class="hint" id="ferMsg">Selecione o mês e o ano da escala e informe o estado e município da empresa. O sistema buscará no banco os feriados nacionais, estaduais e municipais cadastrados para essa localidade.</p>
+  <label>Quem trabalha neste feriado (opcional)</label><div id="fw"></div>
+  <button id="bFer" style="margin-top:8px">Adicionar feriado manual</button><div id="fl"></div>
+  <p class="hint">Sem ninguém marcado, a empresa fecha e todos ficam como FERIADO. Marque os funcionários que trabalharão. Ponto facultativo não é tratado automaticamente como feriado obrigatório.</p>
+ </section>
+ <section>
+  <h2>5. Cargos e equipe mínima</h2>
+  <div class="row"><div><label for="rn">Cargo</label><input id="rn" placeholder="Ex.: Caixa"></div><div style="max-width:90px"><label for="rm">Mínimo</label><input id="rm" type="number" min="0" value="1"></div><button class="fit" id="bRole">Adicionar</button></div>
+  <div id="roles"></div>
+  <p class="hint">Mínimo de pessoas desse cargo trabalhando em cada dia aberto.</p>
+ </section>
+ <section>
+  <h2>6. Funcionários</h2>
+  <div class="imp"><label for="fpdf">Importar lista de empregados (PDF ou texto)</label><input type="file" id="fpdf" accept=".pdf,.txt,.csv">
+  <label for="ftxt">ou cole a lista aqui</label><textarea id="ftxt" rows="3" placeholder="Cole as linhas da relação de empregados, ou uma pessoa por linha: Nome;Cargo"></textarea>
+  <button id="bRead" style="margin-top:8px">Ler lista</button><div id="prev"></div></div>
+  <p class="hint" style="margin-bottom:0">Ou cadastre manualmente:</p>
+  <label for="en">Nome</label><input id="en">
+  <label for="er">Cargo</label><select id="er"></select>
+  <div class="row"><div><label for="ei">Entrada</label><input id="ei" type="time" value="08:00"></div><div><label for="eb">Intervalo (min)</label><input id="eb" type="number" min="0" step="5" value="60"></div></div>
+  <div class="row"><div><label for="es1">Sábado: entrada</label><input id="es1" type="time"></div><div><label for="es2">Sábado: saída</label><input id="es2" type="time"></div></div>
+  <p class="hint">Deixe o sábado em branco se o horário for igual aos outros dias. Se o sábado for mais curto, as horas que faltam são somadas na saída dos outros dias.</p>
+  <button class="p" id="bEmp" style="margin-top:8px">Adicionar funcionário</button>
+  <div id="emps"></div>
+ </section>
+</div>
+
+<div>
+ <div class="bar"><label for="mes" style="margin:0;align-self:center">Mês e ano da escala</label><input type="month" id="mes" aria-label="Mês e ano da escala"><button class="p" id="bGen">Gerar escala</button><button id="bVar">Gerar outra variação</button><button id="bPrint">Imprimir / salvar PDF</button></div>
+ <div id="alerts"></div>
+ <section class="sheet" id="out"><div class="empty">Cadastre cargos e funcionários e clique em “Gerar escala”.</div></section>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const NOMES=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const ORDEM=[1,2,3,4,5,6,0];
+const KEY='escala5x2_v1';
+let S=novo(), DB={cur:'',perfis:{}}, plan=null;
+
+function novo(){return{nome:'',uf:'',cidade:'',mes:new Date().toISOString().slice(0,7),horas:40,abre:[1,2,3,4,5],cargos:[],func:[],feriados:[]}}
+const toM=t=>{const[a,b]=t.split(':').map(Number);return a*60+b};
+const fmt=m=>{m=((Math.round(m)%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const hm=m=>{m=Math.round(m);return Math.floor(m/60)+'h'+(m%60?String(m%60).padStart(2,'0'):'')};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+function loadDB(){try{const r=localStorage.getItem(KEY);if(r)DB=JSON.parse(r)}catch(e){}
+ if(DB.cur&&DB.perfis[DB.cur])S=JSON.parse(JSON.stringify(DB.perfis[DB.cur]));}
+
+function renderPerfis(){
+ const names=Object.keys(DB.perfis);
+ $('perf').innerHTML='<option value="">— nova / não salva —</option>'+names.map(n=>`<option ${n===DB.cur?'selected':''}>${esc(n)}</option>`).join('');
+}
+function renderAll(){
+ $('nome').value=S.nome;$('uf').value=S.uf||'';carregarCidades(S.cidade||'');$('mes').value=S.mes||new Date().toISOString().slice(0,7);
+ document.querySelectorAll('input[name=h]').forEach(r=>r.checked=+r.value===S.horas);
+ $('days').innerHTML=[1,2,3,4,5,6,0].map(d=>`<label><input type="checkbox" value="${d}" ${S.abre.includes(d)?'checked':''}>${NOMES[d].slice(0,3)}</label>`).join('');
+ $('roles').innerHTML=S.cargos.map((c,i)=>`<div class="item"><span>${esc(c.n)}<small>mínimo por dia</small></span><input type="number" min="0" value="${c.min}" data-m="${i}" style="width:64px;flex:none" aria-label="Mínimo por dia de ${esc(c.n)}"><button class="x" data-r="${i}" aria-label="Remover cargo">Remover</button></div>`).join('');
+ $('er').innerHTML=S.cargos.map(c=>`<option>${esc(c.n)}</option>`).join('')||'<option value="">Cadastre um cargo antes</option>';
+ $('emps').innerHTML=S.func.map((f,i)=>`<div class="item ed"><div class="eh"><b>${esc(f.n)}</b><small>${esc(f.r)}</small><button class="x" data-e="${i}">Remover</button></div><div class="eg"><label>Entrada<input type="time" data-i="${i}" data-k="i" value="${f.i}"></label><label>Intervalo (min)<input type="number" min="0" step="5" data-i="${i}" data-k="b" value="${f.b}"></label><label>Sábado: entrada<input type="time" data-i="${i}" data-k="s1" value="${f.s1}"></label><label>Sábado: saída<input type="time" data-i="${i}" data-k="s2" value="${f.s2}"></label></div></div>`).join('');
+ S.feriados=S.feriados||[];
+ $('fw').innerHTML=S.func.length?S.func.map(f=>`<label class="chk"><input type="checkbox" value="${esc(f.n)}"> ${esc(f.n)} <small>${esc(f.r)}</small></label>`).join(''):'<p class="hint">Cadastre funcionários para escolher quem trabalha.</p>';
+ const mesesFeriados={};
+ S.feriados.forEach((f,i)=>{const chave=(f.d||'').slice(0,7);if(!chave)return;(mesesFeriados[chave] ||= []).push({f,i})});
+ $('fl').innerHTML=Object.keys(mesesFeriados).sort().map(chave=>{
+  const [ano,mes]=chave.split('-').map(Number);
+  const titulo=new Date(ano,mes-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const itens=mesesFeriados[chave].map(({f,i})=>`<div class="item ed"><div class="eh"><span><b>${f.d.split('-').reverse().join('/')} · ${esc(f.n||'Feriado')}</b><small>${esc(f.tipo||'Feriado cadastrado')} · ${f.w&&f.w.length?'Empresa abre; trabalham: '+esc(f.w.join(', ')):'Empresa fechada'}</small></span><button class="x" data-f="${i}">Remover</button></div>${S.func.length?`<div class="hint">Marque quem trabalha nesta data:</div><div class="days">${S.func.map(fu=>`<label><input type="checkbox" data-fw-h="${i}" value="${esc(fu.n)}" ${(f.w||[]).includes(fu.n)?'checked':''}>${esc(fu.n)}</label>`).join('')}</div>`:''}</div>`).join('');
+  return `<div class="fer-month"><h3>${titulo}</h3>${itens}</div>`;
+ }).join('') || '<p class="hint">Nenhum feriado cadastrado ainda.</p>';
+ renderPerfis();
+}
+
+/* ---------- geração ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const dm=d=>pad(d.getDate())+'/'+pad(d.getMonth()+1);
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+function gerar(embaralhar){
+ if(S.abre.length<5)return{al:['A empresa precisa abrir pelo menos 5 dias para uma escala 5x2.']};
+ if(!S.func.length)return{al:['Adicione ao menos um funcionário.']};
+ if(!S.mes)return{al:['Escolha o mês da escala.']};
+ const al=new Set(),abre=ORDEM.filter(d=>S.abre.includes(d));
+ const[y,m]=S.mes.split('-').map(Number);
+ const first=new Date(y,m-1,1),last=new Date(y,m,0);
+ const ini=new Date(first);ini.setDate(1-((first.getDay()+6)%7));
+ const nOff=abre.length-5,alvo=S.horas*60;
+ const minDe=r=>(S.cargos.find(c=>c.n===r)||{min:0}).min;
+ const emps=S.func.map((f,i)=>({...f,id:i}));
+ const hist=emps.map(()=>[0,0,0,0,0,0,0]);
+ const fer={};(S.feriados||[]).forEach(f=>fer[f.d]=f);
+ const weeks=[];
+ for(let w=0;ini<=last;w++){
+  const datas=[...Array(7)].map((_,k)=>{const d=new Date(ini);d.setDate(ini.getDate()+k);return d});
+  const fd={};datas.forEach(d=>{const f=fer[ymd(d)];if(f)fd[d.getDay()]=f});
+  const hol=Object.keys(fd).map(Number).filter(d=>abre.includes(d));
+  const efe=abre.filter(d=>!hol.includes(d));
+  let ord=emps.map((_,i)=>i);const rot=w%ord.length;ord=ord.slice(rot).concat(ord.slice(0,rot));
+  if(embaralhar)ord.sort(()=>Math.random()-.5);
+  const cnt={},tot={};efe.forEach(d=>tot[d]=0);
+  emps.forEach(f=>{cnt[f.r]=cnt[f.r]||{};efe.forEach(d=>{cnt[f.r][d]=(cnt[f.r][d]||0)+1;tot[d]++})});
+  const res=emps.map(()=>({folga:new Set(),dias:{},liq:{},fer:{}}));
+  ord.forEach(i=>{const f=emps[i],R=res[i];
+   for(let k=0;k<Math.min(nOff,efe.length);k++){
+    let best=null,bs=-1e9;
+    efe.forEach(d=>{
+     if(R.folga.has(d))return;
+     const rest=cnt[f.r][d]-1,idx=ORDEM.indexOf(d);
+     const adj=[...R.folga].some(x=>Math.abs(ORDEM.indexOf(x)-idx)===1);
+     const sc=(rest>=minDe(f.r)?1000:0)+rest*10+tot[d]+(adj?15:0)-hist[i][d]*12;
+     if(sc>bs){bs=sc;best=d}
+    });
+    R.folga.add(best);cnt[f.r][best]--;tot[best]--;hist[i][best]++;
+   }
+  });
+  emps.forEach((f,i)=>{
+   const R=res[i];
+   const tw=Object.keys(fd).map(Number).filter(d=>fd[d].w&&fd[d].w.includes(f.n));
+   const extra=tw.filter(d=>!abre.includes(d));
+   const reg=[...new Set([...efe.filter(d=>!R.folga.has(d)),...tw.filter(d=>abre.includes(d))])];
+   const cred=hol.filter(d=>!tw.includes(d));
+   const temSab=f.s1&&f.s2,span=temSab?toM(f.s2)-toM(f.s1):0;
+   const sabNet=temSab?span-(span>360?f.b:0):0;
+   const usaSab=temSab&&reg.includes(6);
+   const diario=(alvo-(usaSab?sabNet:0))/Math.max(1,reg.length+cred.length-(usaSab?1:0));
+   let total=0;
+   reg.forEach(d=>{
+    if(d===6&&usaSab){R.dias[d]=f.s1+' – '+f.s2;R.liq[d]=sabNet}
+    else{const a=toM(f.i);R.dias[d]=fmt(a)+' – '+fmt(a+diario+f.b);R.liq[d]=diario}
+    total+=R.liq[d];if(fd[d])R.fer[d]='trab';
+   });
+   cred.forEach(d=>{R.liq[d]=diario;R.fer[d]='cred';total+=diario});
+   extra.forEach(d=>{const a=toM(f.i),dd=alvo/5;R.dias[d]=fmt(a)+' – '+fmt(a+dd+f.b);R.liq[d]=dd;R.fer[d]='trab'});
+   if(diario>600)al.add(`${f.n}: jornada de ${hm(diario)} por dia passa de 10h (limite da CLT). Reduza a carga ou aumente o horário do sábado.`);
+   if(Math.round(total)!==alvo)al.add(`${f.n}: total semanal de ${hm(total)} difere da meta de ${S.horas}h.`);
+  });
+  datas.forEach(dt=>{
+   const dow=dt.getDay();if(dt<first||dt>last||!abre.includes(dow)||fd[dow])return;
+   S.cargos.forEach(c=>{const n=emps.filter((f,i)=>f.r===c.n&&res[i].dias[dow]).length;
+    if(n<c.min)al.add(`${dm(dt)} (${NOMES[dow]}): faltam ${c.min-n} de ${c.n} (mínimo ${c.min}).`)});
+  });
+  weeks.push({datas,res,fd});
+  ini.setDate(ini.getDate()+7);
+ }
+ const ordem=emps.map((_,i)=>i).sort((a,b)=>S.cargos.findIndex(c=>c.n===emps[a].r)-S.cargos.findIndex(c=>c.n===emps[b].r)||emps[a].n.localeCompare(emps[b].n));
+ return{al:[...al],emps,ordem,weeks,abre,first,last};
+}
+
+function desenhar(r){
+ plan=r;
+ const lim=r.al.slice(0,10);
+ $('alerts').innerHTML=lim.map(a=>`<div>${esc(a)}</div>`).join('')+(r.al.length>10?`<div>… e mais ${r.al.length-10} aviso(s).</div>`:'');
+ if(!r.emps){$('out').innerHTML='<div class="empty">Não foi possível gerar a escala.</div>';return}
+ const mes=r.first.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ let h=`<h3>${esc(S.nome||'Escala de trabalho')} — ${mes}</h3><p class="sub">Escala 5x2 · ${S.horas} horas semanais · abre: ${r.abre.map(d=>NOMES[d].slice(0,3)).join(', ')} · dias sem expediente = FOLGA</p>`;
+ const resumo=r.emps.map(()=>({tr:0,fo:0,fw:0,dom:0,min:0}));
+ r.weeks.forEach((wk,n)=>{
+  const dentro=wk.datas.map(d=>d>=r.first&&d<=r.last);
+  h+=`<div class="wk"><table><thead><tr><th>Semana ${n+1}</th>`+wk.datas.map((d,k)=>{
+   const f=wk.fd[d.getDay()];
+   return `<th class="${dentro[k]?'':'oth'}">${NOMES[d.getDay()].slice(0,3)}<br><small>${dm(d)}</small>${dentro[k]&&f?`<br><small class="hn">${esc(f.n||'Feriado')}</small>`:''}</th>`}).join('')+'<th>Horas</th></tr></thead><tbody>';
+  r.ordem.forEach(i=>{
+   const f=r.emps[i],R=wk.res[i],Sm=resumo[i];let min=0;
+   h+=`<tr><td class="n">${esc(f.n)}<small>${esc(f.r)}</small></td>`+wk.datas.map((d,k)=>{
+    if(!dentro[k])return '<td class="o">—</td>';
+    const dow=d.getDay(),t=R.fer[dow];
+    if(R.dias[dow]){min+=R.liq[dow];Sm.tr++;if(dow===0)Sm.dom++;if(t==='trab')Sm.fw++;
+     return `<td class="${t?'ft':''}">${R.dias[dow].replace(' – ','<br>')}${t?'<br><small class="hn">FERIADO</small>':''}</td>`}
+    if(t==='cred'){min+=R.liq[dow];return '<td class="fe">FERIADO</td>'}
+    if(wk.fd[dow])return '<td class="fe">FERIADO</td>';
+    Sm.fo++;return '<td class="f">FOLGA</td>';
+   }).join('')+`<td>${hm(min)}</td></tr>`;
+  });
+  S.cargos.forEach(c=>{
+   h+=`<tr class="cv"><td class="n">${esc(c.n)} no dia</td>`+wk.datas.map((d,k)=>{
+    const dow=d.getDay();if(!dentro[k])return '<td class="o">—</td>';
+    if(!r.abre.includes(dow)&&!wk.fd[dow])return '<td></td>';
+    const q=r.emps.filter((f,i)=>f.r===c.n&&wk.res[i].dias[dow]).length;
+    return `<td class="${q<c.min&&!wk.fd[dow]?'bad':''}">${q}</td>`}).join('')+'<td></td></tr>';
+  });
+  h+='</tbody></table></div>';
+ });
+ h+='<div class="wk"><table><thead><tr><th>Fechamento do mês</th><th>Dias trabalhados</th><th>Folgas</th><th>Domingos trabalhados</th><th>Feriados trabalhados</th><th>Horas no mês</th></tr></thead><tbody>'+
+  r.ordem.map(i=>{const s=resumo[i];return `<tr><td class="n">${esc(r.emps[i].n)}<small>${esc(r.emps[i].r)}</small></td><td>${s.tr}</td><td>${s.fo}</td><td>${s.dom}</td><td>${s.fw}</td><td>${hm(s.min)}</td></tr>`}).join('')+'</tbody></table></div>';
+ if(r.emps.some(f=>f.s1&&f.s2))h+='<p class="hint">Quem trabalha no sábado em horário reduzido compensa as horas na saída dos outros dias da semana. Feriado sem trabalho conta como dia pago.</p>';
+ $('out').innerHTML=h;
+}
+function rodar(v){S=lerForm();desenhar(gerar(v))}
+
+/* ---------- eventos ---------- */
+function lerForm(){
+ S.nome=$('nome').value.trim();S.uf=$('uf').value;S.cidade=$('cidade').value;S.mes=$('mes').value;
+ S.horas=+document.querySelector('input[name=h]:checked').value;
+ S.abre=[...document.querySelectorAll('#days input:checked')].map(i=>+i.value);
+ return S;
+}
+$('bRole').onclick=()=>{const n=$('rn').value.trim();if(!n)return;if(S.cargos.some(c=>c.n===n))return;
+ S.cargos.push({n,min:Math.max(0,+$('rm').value||0)});$('rn').value='';renderAll()};
+$('roles').onclick=e=>{const i=e.target.dataset.r;if(i===undefined)return;const n=S.cargos[i].n;
+ if(S.func.some(f=>f.r===n)&&!confirm('Há funcionários neste cargo. Remover mesmo assim?'))return;
+ S.cargos.splice(i,1);renderAll()};
+$('bEmp').onclick=()=>{
+ const n=$('en').value.trim(),r=$('er').value;
+ if(!n||!r){alert('Informe o nome e escolha um cargo.');return}
+ const s1=$('es1').value,s2=$('es2').value;
+ if((s1&&!s2)||(!s1&&s2)){alert('Preencha entrada e saída do sábado, ou deixe as duas em branco.');return}
+ if(s1&&toM(s2)<=toM(s1)){alert('A saída do sábado deve ser depois da entrada.');return}
+ S.func.push({n,r,i:$('ei').value||'08:00',b:Math.max(0,+$('eb').value||0),s1,s2});
+ $('en').value='';$('es1').value='';$('es2').value='';renderAll();$('en').focus()};
+$('emps').onclick=e=>{const i=e.target.dataset.e;if(i===undefined)return;S.func.splice(i,1);renderAll()};
+$('bGen').onclick=()=>rodar(false);
+$('bVar').onclick=()=>rodar(true);
+$('bPrint').onclick=()=>{if(!plan||!plan.lista)rodar(false);window.print()};
+$('bSave').onclick=()=>{
+ lerForm();if(!S.nome){alert('Dê um nome à empresa antes de salvar.');$('nome').focus();return}
+ if(DB.cur&&DB.cur!==S.nome&&DB.perfis[DB.cur]&&confirm(`Renomear "${DB.cur}" para "${S.nome}"? (Cancelar salva como nova empresa)`))delete DB.perfis[DB.cur];
+ DB.perfis[S.nome]=JSON.parse(JSON.stringify(S));DB.cur=S.nome;persist();renderPerfis();
+ $('saveMsg').textContent='Salvo: '+S.nome+' às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
+$('perf').onchange=e=>{const n=e.target.value;if(!n){S=novo();DB.cur=''}else{S=JSON.parse(JSON.stringify(DB.perfis[n]));DB.cur=n}
+ persist();plan=null;$('alerts').innerHTML='';$('out').innerHTML='<div class="empty">Clique em “Gerar escala”.</div>';renderAll()};
+$('bNew').onclick=()=>{S=novo();DB.cur='';persist();plan=null;$('alerts').innerHTML='';$('out').innerHTML='<div class="empty">Cadastre cargos e funcionários e clique em “Gerar escala”.</div>';renderAll()};
+$('bDel').onclick=()=>{const n=DB.cur;if(!n||!confirm(`Excluir "${n}"?`))return;delete DB.perfis[n];DB.cur='';persist();S=novo();renderAll()};
+
+$('bFer').onclick=()=>{const d=$('fd').value;if(!d){alert('Escolha a data do feriado.');return}
+ S.feriados=(S.feriados||[]).filter(f=>f.d!==d);
+ S.feriados.push({d,n:$('fn').value.trim(),tipo:'Feriado cadastrado manualmente',w:[...document.querySelectorAll('#fw input:checked')].map(i=>i.value)});
+ $('fd').value='';$('fn').value='';renderAll()};
+$('fl').onclick=e=>{const i=e.target.dataset.f;if(i===undefined)return;S.feriados.splice(i,1);renderAll()};
+$('fl').onchange=e=>{const i=e.target.dataset.fwH;if(i===undefined)return;const f=S.feriados[+i];f.w=f.w||[];if(e.target.checked){if(!f.w.includes(e.target.value))f.w.push(e.target.value)}else f.w=f.w.filter(n=>n!==e.target.value);renderAll()};
+
+/* ---------- consulta de feriados no Supabase ---------- */
+const SUPABASE_URL='https://rkjqxckzaicuczltxgph.supabase.co';
+const SUPABASE_KEY='sb_publishable_QD__xVH_znNiPyeSpbOIUw_rbKQZ2Fd';
+$('bBuscaFeriados').onclick=async()=>{
+  const selecionado=$('mes').value||new Date().toISOString().slice(0,7);
+  const [ano,mes]=selecionado.split('-').map(Number);
+  const uf=$('uf').value;
+  const municipio=$('cidade').value;
+  const msg=$('ferMsg'),botao=$('bBuscaFeriados');
+  if(!/^\d{4}-\d{2}$/.test(selecionado)||!ano||mes<1||mes>12){msg.textContent='Selecione um mês e ano válidos no campo da escala.';return}
+  if(!uf||!municipio){msg.textContent='Selecione o estado e o município da empresa antes de consultar os feriados.';return}
+  botao.disabled=true;botao.textContent='Consultando banco...';
+  msg.textContent=`Buscando feriados de ${municipio} - ${uf} para ${mes}/${ano}...`;
+  try{
+    const resp=await fetch(`${SUPABASE_URL}/rest/v1/rpc/buscar_feriados`,{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_KEY,
+        'Authorization':`Bearer ${SUPABASE_KEY}`,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({p_ano:ano,p_mes:mes,p_uf:uf,p_municipio:municipio})
+    });
+    if(!resp.ok){const detalhe=await resp.text();throw new Error(`Supabase (${resp.status}): ${detalhe.slice(0,260)}`)}
+    const dados=await resp.json();
+    let adicionados=0,atualizados=0;
+    (Array.isArray(dados)?dados:[]).forEach(item=>{
+      const data=String(item.data||'').slice(0,10);
+      if(!data)return;
+      const nome=String(item.nome||'Feriado');
+      const existente=(S.feriados||[]).find(f=>f.d===data);
+      const tipo=(item.natureza==='ponto_facultativo'?'Ponto facultativo':
+        item.abrangencia==='nacional'?'Feriado nacional':
+        item.abrangencia==='estadual'?'Feriado estadual':'Feriado municipal');
+      if(existente){
+        const nomes=(existente.n||'').split(' / ');
+        if(!nomes.includes(nome))existente.n=[...nomes,nome].filter(Boolean).join(' / ');
+        existente.tipo=[...new Set([existente.tipo,tipo].filter(Boolean))].join(' · ');
+        existente.origem='Supabase';
+        existente.fonte=[...new Set([existente.fonte,item.fonte].filter(Boolean))].join(' | ');
+        atualizados++;
+      }else{
+        S.feriados.push({d:data,n:nome,tipo,w:[],origem:'Supabase',abrangencia:item.abrangencia,natureza:item.natureza,fonte:item.fonte||'',observacao:item.observacao||''});
+        adicionados++;
+      }
+    });
+    S.feriados.sort((a,b)=>a.d.localeCompare(b.d));
+    renderAll();
+    const nomeMes=new Date(ano,mes-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    msg.textContent=dados.length
+      ? `${dados.length} registro(s) encontrado(s) para ${municipio} - ${uf}, ${nomeMes}. ${adicionados} novo(s) adicionado(s). Datas já cadastradas foram preservadas.`
+      : `Nenhum feriado cadastrado no banco para ${municipio} - ${uf} em ${nomeMes}. Você ainda pode adicionar datas manualmente.`;
+  }catch(e){
+    console.error(e);
+    msg.textContent=`Não foi possível consultar o banco. ${e.message||'Confira a conexão e as permissões no Supabase.'}`;
+  }finally{
+    botao.disabled=false;botao.textContent='Buscar feriados deste mês no banco';
+  }
+};
+
+/* ---------- importação de lista ---------- */
+let achados=[];
+const tc=s=>s.toLowerCase().split(/\s+/).map((w,i)=>i&&['da','de','do','das','dos','e'].includes(w)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+function parseLista(t){
+ const out=[];
+ t.split(/\r?\n/).forEach(l=>{l=l.trim();if(!l)return;
+  let m=l.match(/^\d+\s+(.+?)\s+\d{1,3}(?:\.\d{3})*,\d{2}\s+(.+?)\s+\d{6}\s+\d{2}\/\d{2}\/\d{4}/);
+  if(m){out.push({n:tc(m[1]),r:tc(m[2])});return}
+  m=l.match(/^([^;\t]+)[;\t]\s*(.*)$/);
+  if(m&&m[1].trim())out.push({n:tc(m[1].trim()),r:tc(m[2].trim())});
+ });
+ return out;
+}
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+async function carregarPdfJs(){
+ if(window.pdfjsLib)return;
+ await new Promise((ok,err)=>{const s=document.createElement('script');s.src=PDFJS+'pdf.min.js';s.onload=ok;s.onerror=err;document.head.appendChild(s)});
+ const w=await (await fetch(PDFJS+'pdf.worker.min.js')).text();
+ pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([w],{type:'text/javascript'}));
+}
+async function textoPDF(file){
+ await carregarPdfJs();
+ const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+ let txt='';
+ for(let p=1;p<=pdf.numPages;p++){
+  const c=await (await pdf.getPage(p)).getTextContent(),L=[];
+  c.items.filter(i=>i.str.trim()).forEach(it=>{const y=it.transform[5];let l=L.find(l=>Math.abs(l.y-y)<=3);if(!l){l={y,it:[]};L.push(l)}l.it.push(it)});
+  L.sort((a,b)=>b.y-a.y).forEach(l=>{txt+=l.it.sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str.trim()).join(' ')+'\n'});
+ }
+ return txt;
+}
+$('bRead').onclick=async()=>{
+ let t=$('ftxt').value;const f=$('fpdf').files[0],box=$('prev');
+ if(f){
+  box.innerHTML='<p class="hint">Lendo o arquivo…</p>';
+  try{t=/\.pdf$/i.test(f.name)?await textoPDF(f):await f.text()}
+  catch(e){box.innerHTML='<p class="hint">Não consegui ler o PDF (o leitor precisa de internet para carregar). Copie o texto do PDF, cole na caixa acima e clique em “Ler lista”.</p>';return}
+ }
+ achados=parseLista(t);
+ if(!achados.length){box.innerHTML='<p class="hint">Nenhum funcionário reconhecido. Cole a relação de empregados ou use uma linha por pessoa no formato Nome;Cargo.</p>';return}
+ const ja=n=>S.func.some(x=>x.n.toLowerCase()===n.toLowerCase());
+ box.innerHTML=`<p class="hint">${achados.length} pessoa(s) encontrada(s). Desmarque quem não entra na escala (ex.: diretoria, limpeza).</p>`+
+  achados.map((a,i)=>`<label class="chk"><input type="checkbox" value="${i}" ${ja(a.n)?'':'checked'}> ${esc(a.n)} <small>${esc(a.r||'sem cargo')}${ja(a.n)?' · já cadastrado':''}</small></label>`).join('')+
+  '<button class="p" id="bAdd" style="margin-top:8px">Adicionar selecionados</button>';
+};
+$('prev').onclick=e=>{
+ if(e.target.id!=='bAdd')return;
+ [...document.querySelectorAll('#prev input:checked')].forEach(c=>{
+  const a=achados[+c.value],r=a.r||'Sem cargo';
+  if(!S.cargos.some(x=>x.n===r))S.cargos.push({n:r,min:0});
+  S.func.push({n:a.n,r,i:'08:00',b:60,s1:'',s2:''});
+ });
+ $('prev').innerHTML='';$('ftxt').value='';$('fpdf').value='';renderAll();
+};
+$('emps').onchange=e=>{const t=e.target,i=t.dataset.i;if(i===undefined)return;const k=t.dataset.k;
+ S.func[i][k]=k==='b'?Math.max(0,+t.value||0):(k==='i'&&!t.value?'08:00':t.value)};
+$('roles').onchange=e=>{const i=e.target.dataset.m;if(i===undefined)return;S.cargos[i].min=Math.max(0,+e.target.value||0)};
+
+async function carregarCidades(selecionada=""){
+ const uf=$("uf").value,sel=$("cidade"),msg=$("locMsg");
+ if(!uf){sel.innerHTML='<option value="">Selecione primeiro o estado</option>';sel.disabled=true;msg.textContent="Selecione o estado para carregar os municípios.";return}
+ sel.disabled=true;sel.innerHTML='<option value="">Carregando municípios...</option>';msg.textContent="Consultando a lista oficial de municípios do IBGE...";
+ try{
+  const resp=await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+  if(!resp.ok)throw new Error("Falha na consulta");
+  const cidades=await resp.json();
+  sel.innerHTML='<option value="">Selecione o município</option>'+cidades.map(c=>`<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join("");
+  sel.disabled=false;if(selecionada)sel.value=selecionada;
+  msg.textContent=`${cidades.length} municípios disponíveis para ${uf}.`;
+ }catch(e){sel.innerHTML='<option value="">Não foi possível carregar</option>';sel.disabled=true;msg.textContent="Não foi possível consultar o IBGE. Verifique sua internet e tente novamente."}
+}
+$("uf").addEventListener("change",()=>{S.uf=$("uf").value;S.cidade="";carregarCidades();});
+$("cidade").addEventListener("change",()=>{S.cidade=$("cidade").value;});
+
+loadDB();renderAll();
+</script>
+</body>
+</html>
